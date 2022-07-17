@@ -15,6 +15,7 @@ import 'package:user_profile_shared_preferences_example/themes.dart';
 import 'package:user_profile_shared_preferences_example/utils/user_preferences.dart';
 
 import 'add_new_medicine/add_new_medicine.dart';
+import 'appOpening/onboarding_screen.dart';
 import 'constants/colors.dart';
 import 'home/alarm_page.dart';
 import 'navigationBarPages/first_page.dart';
@@ -72,12 +73,13 @@ class MyApp extends StatelessWidget {
                             fontSize: 20.0,
                             fontFamily: "Popins",
                           ))),
-                  routes: {
-                    "/": (context) => Splash(),
-                    "/home": (context) => Alarm(),
-                    "/add_new_medicine": (context) => AddNewMedicine(),
-                  },
-                  initialRoute: "/",
+                initialRoute: CashHelper.getData(key: "firstOpen") == null ? "first" : "/",
+                routes: {
+                  "/": (context) => Splash(),
+                  "/home": (context) => Alarm(),
+                  "/add_new_medicine": (context) => AddNewMedicine(),
+                  "first": (context)=> WelcomeScreen(),
+                },
                   debugShowCheckedModeBanner: false,
                   title: title,
 

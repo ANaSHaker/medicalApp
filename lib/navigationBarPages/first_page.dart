@@ -1,5 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:user_profile_shared_preferences_example/constants/colors.dart';
 import 'package:user_profile_shared_preferences_example/navigationBarPages/food_page.dart';
 import 'package:user_profile_shared_preferences_example/page/edit_profile_page.dart';
 import 'package:user_profile_shared_preferences_example/page/profile_page.dart';
@@ -30,7 +32,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
+
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFF100F1E),
       bottomNavigationBar: CurvedNavigationBar(

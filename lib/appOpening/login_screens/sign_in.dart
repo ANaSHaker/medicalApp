@@ -2,9 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:user_profile_shared_preferences_example/constants/colors.dart';
 import 'package:user_profile_shared_preferences_example/navigationBarPages/first_page.dart';
+import 'package:user_profile_shared_preferences_example/widget/loading_widget.dart';
 
 import 'forget_password.dart';
 class Sign_in extends StatefulWidget {
@@ -16,29 +19,120 @@ class _sign_inState extends State<Sign_in> {
   var emailControler=TextEditingController();
   var passwordControler=TextEditingController();
   var _formKey=GlobalKey<FormState>();
+  bool loading = false;
+
   @override
-  void UserLogin({
+  Future<void> UserLogin({
     required String email,
     required String password,
-  }) {
+  }) async {
+    try {
+      setState(()
+      {
+        loading = true;
+      });
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      ).then((value) {
+        Navigator.pushAndRemoveUntil(
+            context, MaterialPageRoute(builder: (context) => BottomNavBar())
+            , (route) => false);
+        setState(()
+        {
+          loading = false;
+        });
+      });
+    } on FirebaseAuthException catch  (e) {
+      print('Failed with error code: ${e.code}');
+      print(e.message);
+      showToast(
+        e.toString().contains("ERROR_USER_NOT_FOUND")
+            ? "ERROR_USER_NOT_FOUND"
+            : e.toString(),
+        borderRadius: BorderRadius.circular(5),
+        context: context,
+        animation: StyledToastAnimation.scale,
+        reverseAnimation: StyledToastAnimation.fade,
+        animDuration: Duration(milliseconds: 250),
+      );
+      setState(()
+      {
+        loading = false;
+      });
 
+    }
+   /* try {
+      setState(()
+      {
+        loading = true;
+      });
       FirebaseAuth.instance.signInWithEmailAndPassword
         (email: email, password: password).then((value) {
         print('created new account');
-        //print(value.data.uid);
-      } );
+        Navigator.pushAndRemoveUntil(
+            context, MaterialPageRoute(builder: (context) => BottomNavBar())
+            , (route) => false).onError((error, stackTrace) {
+          setState(() {
+            showToast(
+              error.toString().contains("ERROR_USER_NOT_FOUND")
+                  ? "ERROR_USER_NOT_FOUND"
+                  : error.toString(),
+              borderRadius: BorderRadius.circular(5),
+              context: context,
+              animation: StyledToastAnimation.scale,
+              reverseAnimation: StyledToastAnimation.fade,
+              animDuration: Duration(milliseconds: 250),
+            );
+          });
 
-      Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => BottomNavBar())
-         , (route) => false) .onError((error, stackTrace) => 'error is ${error.toString()}');
+          setState(()
+          {
+            loading = false;
+          });
+        });
+        setState(()
+        {
+          loading = false;
+        });
+      });
 
+    } on FirebaseAuthException catch (error) {
+      Fluttertoast.showToast(msg: error.message!, gravity: ToastGravity.TOP);
+      setState(()
+      {
+        loading = false;
+      });
     }
+    catch(PlatformException)
+    {
+      setState(() {
+        showToast(
+          PlatformException.toString().contains("ERROR_USER_NOT_FOUND")
+              ? "ERROR_USER_NOT_FOUND"
+              : PlatformException.toString(),
+          borderRadius: BorderRadius.circular(5),
+          context: context,
+          animation: StyledToastAnimation.scale,
+          reverseAnimation: StyledToastAnimation.fade,
+          animDuration: Duration(milliseconds: 250),
+        );
+      });
+
+      setState(()
+      {
+        loading = false;
+      });
+    }
+
+   */ }
   bool hide = true;
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
         backgroundColor: backgrouColor,
-        body: Form(
+        body:loading? LoadingScreen() : Form(
           key: _formKey,
           child: ListView(
 
